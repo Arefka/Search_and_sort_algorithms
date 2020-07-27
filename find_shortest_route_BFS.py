@@ -7,7 +7,7 @@ import collections
 ===============================================================
 '''
 
-def calculate_the_shortest_route(input_graph: dict, start_node: int, finish_node: int):
+def calculate_the_shortest_route(input_graph: dict, start_node: int, finish_node: int) -> list:
     visited_nodes_dict = {}
     nodes_queue = collections.deque([start_node])
     visited_nodes_dict[start_node] = [start_node]
