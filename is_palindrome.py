@@ -7,8 +7,6 @@
 ===============================================================
 '''
 
-
-
 class CheckPalindrome:
     def __init__(self, input_word: str):
         self.__users_word = input_word
