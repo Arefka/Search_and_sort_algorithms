@@ -11,15 +11,27 @@ class DijkstrasAlgorithm:
     __costs_dict = {}
     __parents_dict = {}
     __visited_nodes = []
-    __infinity = float('inf')
 
-    def __init__(self, input_graph_dict: dict, input_costs_dics: dict, input_parents_dict: dict):
+    def __init__(self, input_graph_dict: dict):
         self.__user_graph = input_graph_dict
-        self.__costs_dict = input_costs_dics
-        self.__parents_dict = input_parents_dict
+        self.__loader()
+
+    def __loader(self):
+        children_nodes = set()
+        for node in self.__user_graph:
+            if node not in self.__parents_dict:
+                self.__parents_dict[node] = None
+                self.__costs_dict[node] = float('inf')
+                for child_node in self.__user_graph[node]:
+                    children_nodes.add(child_node)
+        start_node = list(self.__parents_dict.keys() - children_nodes)[0]
+        self.__costs_dict[start_node] = 0
+        for child_node in self.__user_graph[start_node]:
+            self.__parents_dict[child_node] = start_node
+            self.__costs_dict[child_node] = self.__user_graph[start_node][child_node]
 
     def __find_lowest_cost_node(self):
-        lowest_cost = self.__infinity
+        lowest_cost = float('inf')
         lowest_cost_node = None
         for node in self.__costs_dict:
             cost = self.__costs_dict[node]
@@ -58,17 +70,5 @@ example_graph = {
     'B_point': {'A_point': 3, 'finish_point': 5},
     'finish_point': {}
 }
-costs_dict = {
-    'start_point': 0,
-    'A_point': 6,
-    'B_point': 2,
-    'finish_point': float('inf')
-}
-parents_dict = {
-    'start_point': None,
-    'A_point': 'start_point',
-    'B_point': 'start_point',
-    'finish_point': None
-}
 
-print(DijkstrasAlgorithm(example_graph, costs_dict, parents_dict).find_the_cheapest_route('start_point', 'finish_point'))
+print(DijkstrasAlgorithm(example_graph).find_the_cheapest_route('start_point', 'finish_point'))
