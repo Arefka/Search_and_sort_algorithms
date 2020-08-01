@@ -11,6 +11,70 @@
 ===============================================================
 '''
 
+class BackpackTask:
+    def __init__(self, things_cost: dict, things_weight: dict, backpack_capacity: int):
+        self.__things_cost_dict = things_cost
+        self.__things_weight_dict = things_weight
+        self.__backpack_capacity = backpack_capacity
+
+    def choose_items_for_backpack(self) -> []:
+        backpack_with_costs = []
+        backpack_with_items = []
+
+        for items in range(len(self.__things_cost_dict)):
+            backpack_with_costs.append([])
+            backpack_with_items.append([])
+            for cell in range(self.__backpack_capacity):
+                backpack_with_costs[items].append([])
+                backpack_with_items[items].append([])
+                backpack_with_costs[items][cell] = 0
+                backpack_with_items[items][cell] = ['']
+
+        for num, item in enumerate(self.__things_weight_dict):
+            for current_capaticy in range(self.__backpack_capacity):
+                if (num == 0 and (current_capaticy + 1) >= self.__things_weight_dict[item]):
+                    backpack_with_costs[num][current_capaticy] = self.__things_cost_dict[item]
+                    backpack_with_items[num][current_capaticy] = [item]
+                elif (num > 0):
+                    if (current_capaticy == 0):
+                        if ((current_capaticy + 1) >= self.__things_weight_dict[item]):
+                            if (self.__things_cost_dict[item] >= backpack_with_costs[num - 1][current_capaticy]):
+                                backpack_with_costs[num][current_capaticy] = self.__things_cost_dict[item]
+                                backpack_with_items[num][current_capaticy] = [item]
+                            else:
+                                backpack_with_costs[num][current_capaticy] = backpack_with_costs[num - 1][
+                                    current_capaticy]
+                                backpack_with_items[num][current_capaticy] = backpack_with_items[num - 1][
+                                    current_capaticy]
+                        else:
+                            backpack_with_costs[num][current_capaticy] = backpack_with_costs[num - 1][current_capaticy]
+                            backpack_with_items[num][current_capaticy] = backpack_with_items[num - 1][current_capaticy]
+                    else:
+                        if ((current_capaticy + 1) >= self.__things_weight_dict[item]):
+                            if (self.__things_cost_dict[item] + backpack_with_costs[num - 1][
+                                current_capaticy + 1 - self.__things_weight_dict[item]] >= backpack_with_costs[num - 1][
+                                current_capaticy]):
+                                backpack_with_costs[num][current_capaticy] = self.__things_cost_dict[item] + \
+                                                                             backpack_with_costs[num - 1][
+                                                                                 current_capaticy + 1 -
+                                                                                 self.__things_weight_dict[item]]
+                                backpack_with_items[num][current_capaticy] = [item] + backpack_with_items[num - 1][
+                                    current_capaticy + 1 - self.__things_weight_dict[item]]
+                            else:
+                                backpack_with_costs[num][current_capaticy] = backpack_with_costs[num - 1][
+                                    current_capaticy]
+                                backpack_with_items[num][current_capaticy] = backpack_with_items[num - 1][
+                                    current_capaticy]
+                        else:
+                            backpack_with_costs[num][current_capaticy] = backpack_with_costs[num - 1][current_capaticy]
+                            backpack_with_items[num][current_capaticy] = backpack_with_items[num - 1][current_capaticy]
+
+        result_cost = backpack_with_costs[len(backpack_with_costs) - 1][::-len(backpack_with_costs) - 1][0]
+        result_items = ','.join(backpack_with_items[len(backpack_with_items) - 1][::-len(backpack_with_items) - 1][0])
+
+        return [result_cost, result_items]
+
+################# example: #################
 things_cost_dict = {
     "tape_recorder": 3000,
     "laptop": 2000,
@@ -24,48 +88,8 @@ things_weight_dict = {
     "picture": 2
 }
 backpack_capacity = 4
-backpack = []
-backpack_with_items = []
-for items in range(len(things_cost_dict)):
-    backpack.append([])
-    backpack_with_items.append([])
-    for cell in range(backpack_capacity):
-        backpack[items].append([])
-        backpack_with_items[items].append([])
-        backpack[items][cell] = 0
-        backpack_with_items[items][cell] = ['']
 
-for num, item in enumerate(things_weight_dict):
-    for current_capaticy in range(backpack_capacity):
-        if (num == 0 and (current_capaticy+1) >= things_weight_dict[item]):
-            backpack[num][current_capaticy] = things_cost_dict[item]
-            backpack_with_items[num][current_capaticy] = [item]
-        elif (num > 0):
-            if (current_capaticy == 0):
-                if ((current_capaticy+1) >= things_weight_dict[item]):
-                    if (things_cost_dict[item] >= backpack[num - 1][current_capaticy]):
-                        backpack[num][current_capaticy] = things_cost_dict[item]
-                        backpack_with_items[num][current_capaticy] = [item]
-                    else:
-                        backpack[num][current_capaticy] = backpack[num - 1][current_capaticy]
-                        backpack_with_items[num][current_capaticy] = backpack_with_items[num - 1][current_capaticy]
-                else:
-                    backpack[num][current_capaticy] = backpack[num - 1][current_capaticy]
-                    backpack_with_items[num][current_capaticy] = backpack_with_items[num - 1][current_capaticy]
-            else:
-                if ((current_capaticy+1) >= things_weight_dict[item]):
-                    if (things_cost_dict[item] + backpack[num - 1][current_capaticy + 1 - things_weight_dict[item]] >= backpack[num - 1][current_capaticy]):
-                        backpack[num][current_capaticy] = things_cost_dict[item] + backpack[num - 1][current_capaticy + 1 - things_weight_dict[item]]
-                        backpack_with_items[num][current_capaticy] = [item] + backpack_with_items[num - 1][current_capaticy + 1 - things_weight_dict[item]]
-                    else:
-                        backpack[num][current_capaticy] = backpack[num - 1][current_capaticy]
-                        backpack_with_items[num][current_capaticy] = backpack_with_items[num - 1][current_capaticy]
-                else:
-                    backpack[num][current_capaticy] = backpack[num - 1][current_capaticy]
-                    backpack_with_items[num][current_capaticy] = backpack_with_items[num - 1][current_capaticy]
-
-print(backpack)
-print(backpack_with_items)
+print(BackpackTask(things_cost_dict, things_weight_dict, backpack_capacity).choose_items_for_backpack())
 
 
 
