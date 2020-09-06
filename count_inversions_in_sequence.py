@@ -1,10 +1,8 @@
 '''
 ===============================================================
-
     Task of counting inversions in sequence:
     Algorithmic complexity of brute force way = O(n^2).
     Algorithmic complexity of way with soft = O(n*log n).
-
 ===============================================================
 '''
 
